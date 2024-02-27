@@ -43,7 +43,54 @@ Devereuxall<-merge(Devereux_TSS,Devereuxdepth,by="Datetime",all.x=TRUE)
 
 
 ##Calculate volume weighted average
+# delete unneccessary columns
+Phelpsall<-Phelpsall[1:190,c(1,4,8,11)]
+Venocoall<-Venocoall[1:123,c(1,4,8,11)]
+Devereuxall<-Devereuxall[1:64,c(1,4,8,11)]
+#Get proportional depths
+Phelpsall<-Phelpsall[!is.na(Phelpsall$LEVEL),]
+Devereuxall<-Devereuxall[!is.na(Devereuxall$LEVEL),]
+Venocoall<-Venocoall[!is.na(Venocoall$LEVEL),]
+
+Phelpsall$Year<-format(Phelpsall$Datetime,format="%Y")
+Devereuxall$Year<-format(Devereuxall$Datetime,format="%Y")
+Venocoall$Year<-format(Venocoall$Datetime,format="%Y")
+
+#Phelps
+for(i in unique(Phelpsall$Year)){
+  PA<-Phelpsall[Phelpsall$Year==i,]
+  print(weighted.mean(PA$TSS..mg.L.,PA$LEVEL))
+}
+
+TSS.mg.L<-c(496.112,463.8917,545.9612,1043.171)
+year<-c(2019,2020,2021,2022)
+Phelps.VWA<-data.frame(TSS.mg.L,year)
+Phelps.VWA$Site<-"Phelps"
+
+#Devereux
+for(i in unique(Devereuxall$Year)){
+  DA<-Devereuxall[Devereuxall$Year==i,]
+  print(weighted.mean(DA$TSS..mg.L.,DA$LEVEL))
+}
+
+TSS.mg.L<-c(102.4426,182.1591,307.4044,118.2593)
+year<-c(2019,2020,2021,2022)
+Devereux.VWA<-data.frame(TSS.mg.L,year)
+Devereux.VWA$Site<-"Devereux"
+
+#Venoco
+for(i in unique(Venocoall$Year)){
+  VA<-Venocoall[Venocoall$Year==i,]
+  print(weighted.mean(VA$TSS..mg.L.,VA$LEVEL))
+}
+
+TSS.mg.L<-c(15758.14,330.6706,1703.431,28.97308)
+year<-c(2019,2020,2021,2022)
+Venoco.VWA<-data.frame(TSS.mg.L,year)
+Venoco.VWA$Site<-"Venoco"
+
 ##merge back together
-##Aggregate to get VWM TSS/ site / year and average of all NCOS/yr
+NCOS_TSS_VWM_mg_L<-rbind(Phelps.VWA,Devereux.VWA,Venoco.VWA)
+NCOS_TSS_VWM_mg_L
 
-
+##Need to redo with water year
