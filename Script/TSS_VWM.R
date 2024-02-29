@@ -4,7 +4,7 @@ TSS_data<-read.csv("data/2020_2021_TSS_Fulldataset.csv")
 
 #Phelps watershed size= about 500 ha
 
-#calculate mean of TSS
+#clean TSS data a bit
 TSS_data<-TSS_data[!is.na(TSS_data$TSS..mg.L.),]
 TSS_data$Datetime<-as.POSIXct(paste0(TSS_data$Date," ",TSS_data$Time),format="%Y-%m-%d %H:%M:%S")
 str(TSS_data)
