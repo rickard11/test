@@ -43,35 +43,80 @@ plot(PhelpsFlow$W~ PhelpsFlow$Q, main = "Rating Curve ",xlab="Discharge (cms)",y
 
 #plotting regression model
 ?seq
-q <- seq(0.00000001, 7, 0.01)
-
+##Need to fix q
+q <- seq(0.00001, 150, 0.0001)
+tail(q)
 lines(q, a*q^b, lty = 1, col = "black")
-#Equation
+#Equation for deepest point height
 Height<-a*q^b
 df<-data.frame(q,Height) #Convert equation to a dataframe
 colnames(df)<-c("discharge.cms","height.m")
-#Used excel to calculate the linear regression for flow depth to ptdepth
-#This is making the pt height lower than deepest height need to fix
-df$ptdepth_ft<-(0.5009*df$height.m+0.3408)*3.28 #linear regression +conversion to feet
 df$height_ft<-df$height.m*3.28 #convert depth to feet to compare to expectation
-#Merge rating curve equation with stage height values from the nutrient table
+df$ptdepth_ft<-df$height_ft-0.77 #convert height at deepest point to expected pt reading
+
+#Merge rating curve equation with stage height values from the nutrient table change to american units
 tail(df)
-df$height_ft<-format(df$height_ft,digits=2)
-df$ptdepth_ft<-format(df$ptdepth_ft,digits=3)
-df<-df[,c(1,3,4)]
+plot(df$height.m~df$discharge.cms)
+df$height_ft<-round(df$height_ft,2)
+df$ptdepth_ft<-round(df$ptdepth_ft,2)
+df$discharge.cfs<-df$discharge.cms*(3.28*3.28*3.28)
+df<-df[,c(3,4,5)]
+head(df)
+#We need only 1 value for each 0.01
+dfagg<-aggregate(discharge.cfs~ptdepth_ft,df,FUN=mean)
+dfagg<-dfagg[11:606,]
+#Make a dataset to fill in missing low numbers then merge
+ptdepth_ft<-c(0.99,1.01,1.03,1.05,1.08,1.12)
+discharge.cfs<-c(3.7e-02,4.05e-02,4.4e-02,4.75e-02,5.45e-02,6.5e-02)
+add<-data.frame(ptdepth_ft,discharge.cfs) #Made new dataframe with missing numbers based on other number in list
+dfagg2<-rbind(add,dfagg) #Combined 2 lists.
 
-
+#Upload pt depth file
 Phelpsdepth<-read.csv("data/PhelpsBridge_PTdata_2018-2022wy.csv")
 Phelpsdepth<-Phelpsdepth[!is.na(Phelpsdepth$LEVEL),]
 Phelpsdepth$LEVEL<-round(Phelpsdepth$LEVEL,2)
-Phelpsdepth<-Phelpsdepth[Phelpsdepth$LEVEL>0,]
+Phelpsdepth<-Phelpsdepth[Phelpsdepth$LEVEL>0.97,]#anything under 0.97 has insignificant flow
+#keep only important stuff
 PD<-Phelpsdepth[,c(2,3,4)]
 colnames(PD)[3]<-"ptdepth_ft"
 # I need to merge Phelps depth with the predicted cfs
 head(PD)
-head(df)
-test<-merge(PD,df,by="ptdepth_ft",all.x = TRUE)
-test[10000:10100,]
+head(dfagg2)
+Phelpsdischarge<-merge(PD,dfagg2,by="ptdepth_ft",all.x = TRUE)
+Phelpsdischarge<-Phelpsdischarge[!is.na(Phelpsdischarge$ptdepth_ft),]
+Phelpsdischarge
+Phelpsdischarge$Date<-format(as.Date(Phelpsdischarge$Date,format="%Y-%m-%d"))
+Phelpsdischarge$Datetime<-paste0(Phelpsdischarge$Date," ",Phelpsdischarge$Time)
+Phelpsdischarge$Datetime<-as.POSIXct(Phelpsdischarge$Datetime,format="%Y-%m-%d %H:%M:%S")
+#split into seperate water years
+str(Phelpsdischarge)
+Pdis2020<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-01-01 00:00:00"&
+                            Phelpsdischarge$Datetime<="2020-10-01 00:00:00",]
+
+
+Pdis2021<-Phelpsdischarge[Phelpsdischarge$Datetime>="2020-01-01 00:00:00"&
+                            Phelpsdischarge$Datetime<="2021-10-01 00:00:00",]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Determine area of Phelps
 ## Phelps = ~450 ha
 ## Devereux = ~250 ha
