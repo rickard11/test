@@ -89,34 +89,48 @@ Phelpsdischarge$Datetime<-paste0(Phelpsdischarge$Date," ",Phelpsdischarge$Time)
 Phelpsdischarge$Datetime<-as.POSIXct(Phelpsdischarge$Datetime,format="%Y-%m-%d %H:%M:%S")
 write.csv(Phelpsdischarge,"C:/Users/rickard/Documents/test/Data/Phelps_PTdepth_FlowCFS.csv")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Subset all dates that have a storm
+Phelpsstorms<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-11-25"&Phelpsdischarge$Datetime<="2019-11-29"|
+                                Phelpsdischarge$Datetime>="2019-12-01"&Phelpsdischarge$Datetime<="2019-12-09"|
+                                Phelpsdischarge$Datetime>="2019-12-21" &Phelpsdischarge$Datetime<="2019-12-26"|
+                                Phelpsdischarge$Datetime>="2020-03-09" &Phelpsdischarge$Datetime<="2020-03-20"|
+                                Phelpsdischarge$Datetime=="2020-01-17" |Phelpsdischarge$Datetime=="2020-03-02"|
+                                Phelpsdischarge$Datetime>="2020-04-06" &Phelpsdischarge$Datetime<="2020-04-10"|
+                                Phelpsdischarge$Datetime>="2020-12-26" &Phelpsdischarge$Datetime<="2020-12-30"|
+                                Phelpsdischarge$Datetime>="2021-01-24" &Phelpsdischarge$Datetime<="2021-01-30"|
+                                Phelpsdischarge$Datetime>="2021-03-08" &Phelpsdischarge$Datetime<="2021-03-12"|
+                                Phelpsdischarge$Datetime=="2021-03-15"|
+                                Phelpsdischarge$Datetime>="2021-10-23" &Phelpsdischarge$Datetime<="2021-10-26"|
+                                Phelpsdischarge$Datetime>="2021-02-12" &Phelpsdischarge$Datetime<="2021-12-15"|
+                                Phelpsdischarge$Datetime>="2021-12-22" &Phelpsdischarge$Datetime<="2021-12-24"|
+                                Phelpsdischarge$Datetime>="2022-12-28" &Phelpsdischarge$Datetime<="2022-12-30"|
+                                Phelpsdischarge$Datetime>="2022-03-26" &Phelpsdischarge$Datetime<="2022-03-29"|
+                                Phelpsdischarge$Datetime=="2022-04-22" ,]
 
 #split into seperate water years
 str(Phelpsdischarge)
-Pdis2020<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-10-01 00:00:00"&
-                            Phelpsdischarge$Datetime<="2020-10-01 00:00:00",]
+Pdis2020<-Phelpsstorms[Phelpsstorms$Datetime>="2019-10-01 00:00:00"&
+                            Phelpsstorms$Datetime<="2020-10-01 00:00:00",]
 Pdis2020$discharge.cf15min<-Pdis2020$discharge.cfs*60*15
+Pdis2020<-Pdis2020[!is.na(Pdis2020$discharge.cf15min),]
 
 
-Pdis2021<-Phelpsdischarge[Phelpsdischarge$Datetime>="2020-10-01 00:00:00"&
-                            Phelpsdischarge$Datetime<="2021-10-01 00:00:00",]
+Pdis2021<-Phelpsstorms[Phelpsstorms$Datetime>="2020-10-01 00:00:00"&
+                            Phelpsstorms$Datetime<="2021-10-01 00:00:00",]
 Pdis2021$discharge.cf15min<-Pdis2021$discharge.cfs*60*15
 Pdis2021<-Pdis2021[!is.na(Pdis2021$discharge.cf15min),]
+
+Pdis2022<-Phelpsstorms[Phelpsstorms$Datetime>="2021-10-01 00:00:00"&
+                         Phelpsstorms$Datetime<="2022-10-01 00:00:00",]
+Pdis2022$discharge.cf15min<-Pdis2022$discharge.cfs*60*15
+Pdis2022<-Pdis2022[!is.na(Pdis2022$discharge.cf15min),]
+
+
+
+
+sum(Pdis2020$discharge.cf15min)
 sum(Pdis2021$discharge.cf15min)
-
-
+sum(Pdis2022$discharge.cf15min)
 
 
 #Determine area of Phelps
