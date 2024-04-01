@@ -1,6 +1,6 @@
 ## Isolating Phelps samples for TSS to determine kg/ha
 
-TSS_data<-read.csv("2020_2021_TSS_Fulldataset.csv")
+TSS_data<-read.csv("Data/2020_2021_TSS_Fulldataset.csv")
 
 #Phelps watershed size= about 500 ha
 
@@ -19,9 +19,9 @@ Venoco_TSS<-TSS_data[TSS_data$Location=="NCOS-V"|TSS_data$Location=="Venoco",]
 
 
 ## Load depth data for each site to calculate volume weighted mean
-Phelpsdepth<-read.csv("PhelpsBridge_PTdata_2018-2022wy.csv")
-Devereuxdepth<-read.csv("DevereuxCreek_PTdata_2018-2022wy.csv")
-Venocodepth<-read.csv("Venoco_PTdata_2018-2022wy.csv")
+Phelpsdepth<-read.csv("Data/PhelpsBridge_PTdata_2018-2022wy.csv")
+Devereuxdepth<-read.csv("Data/DevereuxCreek_PTdata_2018-2022wy.csv")
+Venocodepth<-read.csv("Data/Venoco_PTdata_2018-2022wy.csv")
 
 
 ## Structure date times to be mergable and remove unneccessary columns

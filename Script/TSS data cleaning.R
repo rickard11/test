@@ -1,3 +1,4 @@
+#This is the first if the scripts that needs to be ran.
 #First download needed csv's and libraries
 library(readxl)
 library(ggplot2)
@@ -52,8 +53,14 @@ data$Location<-gsub("NCOS-D","Devereux",data$Location)
 data$Location<-gsub("NCOS-W","Whittier",data$Location)
 unique(data$Location)
 
+#Remove base level observations because there would be no flow at base level. 
+#I am removing dates with less than 0.1 inches of rain- assuming this would produce a negigable amout of flow
+data<-data[data$Date!="2019-12-15"&data$Date!="2020-01-08"& data$Date!="2020-12-04"
+           &data$Date!="2021-03-03"&data$Date!="2021-11-09"&data$Date!="2022-01-03"
+           &data$Date!="2019-12-16",]
+getwd()
 #print final dataframe
-write.csv(data,"C:/Users/ricka/OneDrive/Documents/test/data/2020_2021_TSS_Fulldataset.csv")
+write.csv(data,"C:/Users/rickard/Documents/test/Data/2020_2021_TSS_Fulldataset.csv")
 
 
 

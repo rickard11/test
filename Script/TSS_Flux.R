@@ -24,10 +24,10 @@ Flow$Q<-Flow$cfs*0.0283168
 #Convert water depth from ft to m
 Flow$W<-Flow$`Water depth`*0.3048
 Flow<-as.data.frame(Flow)
-Flow<-Flow[c(1:17,19:33),]
+Flow<-Flow[c(1:21,23:34),]
 #Create rating curve for Phelps
 PhelpsFlow<-Flow[Flow$Location=="Phelps",] #Isolate only Phelps creek
-PhelpsFlow<-PhelpsFlow[,9:10] #We need only discharge and stage
+PhelpsFlow<-PhelpsFlow[,15:16] #We need only discharge and stage
 
 #Generate a power regression for the rating curve
 m2<-nls(PhelpsFlow$W~a2*PhelpsFlow$Q^b2,data=PhelpsFlow,start=list(a2=1,b2=1))
@@ -42,8 +42,6 @@ plot(PhelpsFlow$W~ PhelpsFlow$Q, main = "Rating Curve ",xlab="Discharge (cms)",y
      xlim=c(0,7),ylim=c(0,1.75))
 
 #plotting regression model
-?seq
-##Need to fix q
 q <- seq(0.00001, 150, 0.0001)
 tail(q)
 lines(q, a*q^b, lty = 1, col = "black")
@@ -56,15 +54,16 @@ df$ptdepth_ft<-df$height_ft-0.77 #convert height at deepest point to expected pt
 
 #Merge rating curve equation with stage height values from the nutrient table change to american units
 tail(df)
-plot(df$height.m~df$discharge.cms)
 df$height_ft<-round(df$height_ft,2)
 df$ptdepth_ft<-round(df$ptdepth_ft,2)
 df$discharge.cfs<-df$discharge.cms*(3.28*3.28*3.28)
-df<-df[,c(3,4,5)]
+
 head(df)
 #We need only 1 value for each 0.01
 dfagg<-aggregate(discharge.cfs~ptdepth_ft,df,FUN=mean)
-dfagg<-dfagg[11:606,]
+plot(dfagg$ptdepth_ft~dfagg$discharge.cfs)
+dfagg
+dfagg<-dfagg[11:606,]#cut off the fisrt few which represent base level or lower
 #Make a dataset to fill in missing low numbers then merge
 ptdepth_ft<-c(0.99,1.01,1.03,1.05,1.08,1.12)
 discharge.cfs<-c(3.7e-02,4.05e-02,4.4e-02,4.75e-02,5.45e-02,6.5e-02)
@@ -88,31 +87,34 @@ Phelpsdischarge
 Phelpsdischarge$Date<-format(as.Date(Phelpsdischarge$Date,format="%Y-%m-%d"))
 Phelpsdischarge$Datetime<-paste0(Phelpsdischarge$Date," ",Phelpsdischarge$Time)
 Phelpsdischarge$Datetime<-as.POSIXct(Phelpsdischarge$Datetime,format="%Y-%m-%d %H:%M:%S")
+write.csv(Phelpsdischarge,"C:/Users/rickard/Documents/test/Data/Phelps_PTdepth_FlowCFS.csv")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #split into seperate water years
 str(Phelpsdischarge)
-Pdis2020<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-01-01 00:00:00"&
+Pdis2020<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-10-01 00:00:00"&
                             Phelpsdischarge$Datetime<="2020-10-01 00:00:00",]
+Pdis2020$discharge.cf15min<-Pdis2020$discharge.cfs*60*15
 
 
-Pdis2021<-Phelpsdischarge[Phelpsdischarge$Datetime>="2020-01-01 00:00:00"&
+Pdis2021<-Phelpsdischarge[Phelpsdischarge$Datetime>="2020-10-01 00:00:00"&
                             Phelpsdischarge$Datetime<="2021-10-01 00:00:00",]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Pdis2021$discharge.cf15min<-Pdis2021$discharge.cfs*60*15
+Pdis2021<-Pdis2021[!is.na(Pdis2021$discharge.cf15min),]
+sum(Pdis2021$discharge.cf15min)
 
 
 
