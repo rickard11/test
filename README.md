@@ -1,4 +1,4 @@
--# Devereux Slough Solinst Levelogger data 2018-
+# Devereux Slough Solinst Levelogger data 2018-
 ---
 
 The devereux Slough is a temperary open closed estuary (TOCE) we use pressure transducers across the slough and associated wetlands and inlets to monitor water quantity. The Hydrology_equipment_data.csv lists the location of each pressure transducer.
