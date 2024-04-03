@@ -136,7 +136,7 @@ yrlyphelpsflux<-aggregate(mgTSS_15m~wtr_yr,Phelpsflux,FUN=sum)
 yrlyphelpsflux$kgTSS_yr<-yrlyphelpsflux$mgTSS_15m*1e-6
 #divide by ha
 yrlyphelpsflux$kg_yr_ha<-yrlyphelpsflux$kgTSS_yr/450
-#compare to Melacks findings
+#compare to Melacks findings 
 
 #split into seperate water years
 str(Phelpsdischarge)
