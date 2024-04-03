@@ -107,6 +107,37 @@ Phelpsstorms<-Phelpsdischarge[Phelpsdischarge$Datetime>="2019-11-25"&Phelpsdisch
                                 Phelpsdischarge$Datetime>="2022-03-26" &Phelpsdischarge$Datetime<="2022-03-29"|
                                 Phelpsdischarge$Datetime=="2022-04-22" ,]
 
+Phelpsstorms$discharge.cf15min<-Phelpsstorms$discharge.cfs*60*15
+Phelpsstorms<-Phelpsstorms[!is.na(Phelpsstorms$discharge.cf15min),]
+Phelpsstorms$discharge_litre_15m<-Phelpsstorms$discharge.cf15min*28.3168
+
+#merge with nutrient data
+#use existing number to fill in gaps
+Phelps_TSS<-Phelps_TSS[,c(3,10)]
+Phelpsflux<-merge(Phelps_TSS,Phelpsstorms,by="Datetime",all.x=TRUE,all.y = TRUE)
+Phelpsflux$wtr_yr <- getYearQuarter(Phelpsflux$Datetime, firstMonth=10)#GetYear function is written in data cleaning script
+#use existing number to fill in gaps
+na_indices <- which(is.na(Phelpsflux$TSS..mg.L.))
+# Interpolate NA values
+
+Phelpsflux$TSS..mg.L.[na_indices] <- approx(seq_along(Phelpsflux$TSS..mg.L.)
+                      [!is.na(Phelpsflux$TSS..mg.L.)],Phelpsflux$TSS..mg.L.
+                      [!is.na(Phelpsflux$TSS..mg.L.)], xout = na_indices)$y
+#add 8mg/L to 3380-3390
+#add nutrients up to 171 (which is 1054mg/l)
+#I also need to seperate into years because the change from one water year to the next (and one storm to the next)
+#is being interpolated based on the previous value which would not make sense.
+
+#multiple by number of litres
+Phelpsflux$mgTSS_15m<-Phelpsflux$TSS..mg.L.*Phelpsflux$discharge_litre_15m
+#aggregate the sum of mg TSS per year
+yrlyphelpsflux<-aggregate(mgTSS_15m~wtr_yr,Phelpsflux,FUN=sum)
+#convert to kg
+yrlyphelpsflux$kgTSS_yr<-yrlyphelpsflux$mgTSS_15m*1e-6
+#divide by ha
+yrlyphelpsflux$kg_yr_ha<-yrlyphelpsflux$kgTSS_yr/450
+#compare to Melacks findings
+
 #split into seperate water years
 str(Phelpsdischarge)
 Pdis2020<-Phelpsstorms[Phelpsstorms$Datetime>="2019-10-01 00:00:00"&
