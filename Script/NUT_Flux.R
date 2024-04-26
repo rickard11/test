@@ -1,16 +1,24 @@
 #merge with nutrient data
 #use existing number to fill in gaps
+Phelpsstorms<-Phelpsstorms[,c(1,4:7)]
 Phelpsflux<-merge(Phelps_nut,Phelpsstorms,by="Datetime",all.x=TRUE,all.y = TRUE)
-Phelpsflux$wtr_yr <- getYearQuarter(Phelpsflux$Datetime, firstMonth=10)#GetYear function is written in data cleaning script
+Phelpsflux$wtr_yr <- getYearQuarter(Phelpsflux$Sample.Date, firstMonth=10)#GetYear function is written in data cleaning script
+str(Phelpsflux)
 #use existing number to fill in gaps
-na_indices <- which(is.na(Phelpsflux$TSS..mg.L.))
+na_indices <- which(is.na(Phelpsflux$Phosphate.um))
 # Interpolate NA values
+unique(Phelpsflux$Phosphate.um)
+Phelpsflux$Phosphate.um[na_indices] <- approx(seq_along(Phelpsflux$Phosphate.um)
+                                            [!is.na(Phelpsflux$Phosphate.um)],Phelpsflux$Phosphate.um
+                                            [!is.na(Phelpsflux$Phosphate.um)], xout = na_indices)$y
 
-Phelpsflux$TSS..mg.L.[na_indices] <- approx(seq_along(Phelpsflux$TSS..mg.L.)
-                                            [!is.na(Phelpsflux$TSS..mg.L.)],Phelpsflux$TSS..mg.L.
-                                            [!is.na(Phelpsflux$TSS..mg.L.)], xout = na_indices)$y
-#add 8mg/L to 3380-3390
-#add nutrients up to 171 (which is 1054mg/l)
+Phelpsflux$Nitrite.Nitrate.um[na_indices] <- approx(seq_along(Phelpsflux$Nitrite.Nitrate.um)
+                                              [!is.na(Phelpsflux$Nitrite.Nitrate.um)],Phelpsflux$Nitrite.Nitrate.um
+                                              [!is.na(Phelpsflux$Nitrite.Nitrate.um)], xout = na_indices)$y
+Phelpsflux$Ammonia.um[na_indices] <- approx(seq_along(Phelpsflux$Ammonia.um)
+                                                    [!is.na(Phelpsflux$Ammonia.um)],Phelpsflux$Ammonia.um
+                                                    [!is.na(Phelpsflux$Ammonia.um)], xout = na_indices)$y
+
 #I also need to seperate into years because the change from one water year to the next (and one storm to the next)
 #is being interpolated based on the previous value which would not make sense.
 
