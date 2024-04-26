@@ -98,3 +98,56 @@ year<-c(2019,2020,2021,2022, 2018, 2017)
 Phelps.VWA<-data.frame(P_um,A_um,N_um,year)
 Phelps.VWA$Site<-"Phelps"
 
+
+#Devereux
+for(i in unique(Devereuxall$wtr_yr)){
+  DA<-Devereuxall[Devereuxall$wtr_yr==i,]
+  print(DA$wtr_yr)
+  print(weighted.mean(DA$Phosphate.um,DA$LEVEL))
+  print(weighted.mean(DA$Ammonia.um,DA$LEVEL))
+  print(weighted.mean(DA$Nitrite.Nitrate.um,DA$LEVEL))
+}
+
+P_um<-c(10.15631,15.86781,18.49038,17.75)
+A_um<-c(4.788671,7.733583,8.08494,25.895)
+N_um<-c(50.85828,166.083,145.2934,113.55)
+year<-c(2020,2021,2022,2018)
+Devereux.VWA<-data.frame(P_um,A_um,N_um,year)
+Devereux.VWA$Site<-"Devereux"
+
+#Venoco
+for(i in unique(Venocoall$wtr_yr)){
+  VA<-Venocoall[Venocoall$wtr_yr==i,]
+  print(VA$wtr_yr)
+  print(weighted.mean(VA$Phosphate.um,VA$LEVEL))
+  print(weighted.mean(VA$Ammonia.um,VA$LEVEL))
+  print(weighted.mean(VA$Nitrite.Nitrate.um,VA$LEVEL))
+}
+
+P_um<-c(12.45304,9.955912,9.625064,8.998853,9.47,0.76)
+A_um<-c(3.16293,21.40097,5.590495,12.20106,9.73,6.36)
+N_um<-c(69.54218,9.140282,73.94291,54.17138,56.5,14.6)
+year<-c(2019,2020,2021,2022,2018,2017)
+Venoco.VWA<-data.frame(P_um,A_um,N_um,year)
+Venoco.VWA$Site<-"Venoco"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

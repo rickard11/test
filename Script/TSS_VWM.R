@@ -71,9 +71,8 @@ Phelpsdepth$Datetime<-round_date(Phelpsdepth$Datetime, unit="15 mins")
 Phelpsall<-merge(Phelps_TSS,Phelpsdepth,by="Datetime",all.x=TRUE)
 Venocoall<-merge(Venoco_TSS,Venocodepth,by="Datetime",all.x=TRUE)
 Devereuxall<-merge(Devereux_TSS,Devereuxdepth,by="Datetime",all.x=TRUE)
-#Location with NA for discharge is a sample time with negligable discharge
 
-tail(Phelpsall)
+
 ##Calculate volume weighted average
 # delete unneccessary columns
 Phelpsall<-Phelpsall[c(1,4,8,11,12,13)]
@@ -84,7 +83,7 @@ Phelpsall<-Phelpsall[!is.na(Phelpsall$ptdepth_ft),]
 Devereuxall<-Devereuxall[!is.na(Devereuxall$LEVEL),]
 Venocoall<-Venocoall[!is.na(Venocoall$LEVEL),]
 
-#Phelps
+#Phelps yearly weighted average of TSS
 for(i in unique(Phelpsall$wtr_yr)){
   PA<-Phelpsall[Phelpsall$wtr_yr==i,]
   print(PA$wtr_yr)
